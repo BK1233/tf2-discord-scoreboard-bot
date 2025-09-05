@@ -1,0 +1,9 @@
+# Python cache and virtual environments
+__pycache__/
+.venv/
+
+# Local environment variables
+.env
+
+# Compiled SourceMod plugins
+*.smx
