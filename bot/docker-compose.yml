@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  tf2scorebot:
+    build: .
+    restart: unless-stopped
+    # Load environment variables from .env file
+    env_file:
+      - .env
+    # Explicitly set the path inside the container to match SCOREBOARD_PATH
+    environment:
+      - SCOREBOARD_PATH=/data/scoreboard.json
+    volumes:
+      # TODO: update the host path on the left to point to your scoreboard.json file
+      # Example (Windows): F:/tf2/tf/addons/sourcemod/data/scoreboard.json:/data/scoreboard.json:ro
+      # Example (Linux): /home/tf2server/tf/addons/sourcemod/data/scoreboard.json:/data/scoreboard.json:ro
+      - /absolute/path/to/scoreboard.json:/data/scoreboard.json:ro
