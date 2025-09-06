@@ -1,36 +1,19 @@
-name: Publish Docker image
+- uses: actions/checkout@v4
 
-on:
-  push:
-    branches: [ "main" ]   # build/push latest on every push to main
-  release:
-    types: [published]     # also build/push a version tag on release
+- name: Show repo tree and Dockerfile (debug)
+  run: |
+    pwd
+    ls -la
+    echo "---- Dockerfile (head) ----"
+    head -n 60 Dockerfile || true
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Ensure secrets are set
-        run: |
-          if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ] || [ -z "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
-            echo "❌ DOCKERHUB_USERNAME or DOCKERHUB_TOKEN secret not set!"
-            exit 1
-          fi
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tf2-discord-scoreboard:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/tf2-discord-scoreboard:${{ github.ref_name }}
+- name: Build and push Docker image
+  uses: docker/build-push-action@v5
+  with:
+    context: .
+    file: ./Dockerfile          # <— explicit
+    push: true
+    no-cache: true              # <— avoid using old cached Dockerfile
+    tags: |
+      beekay123/tf2-discord-scoreboard:latest
+      beekay123/tf2-discord-scoreboard:${{ github.ref_name }}
