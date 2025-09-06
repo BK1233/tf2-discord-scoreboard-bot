@@ -1,0 +1,9 @@
+services:
+  tf2scorebot:
+    image: beekay123/tf2-discord-scoreboard:latest
+    container_name: tf2scorebot
+    restart: unless-stopped
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - GUILD_ID=${GUILD_ID}
+      - AUTO_CHANNEL_ID=${AUTO_CHANNEL_ID}
