@@ -6,15 +6,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Copy everything first (so build doesn't fail if requirements.txt is absent)
+# Copy the whole repo (so build won't fail if requirements.txt is missing)
 COPY . .
 
-# If requirements.txt exists, install; otherwise skip
+# Install deps only if requirements.txt exists
 RUN if [ -f requirements.txt ]; then \
       pip install --no-cache-dir -r requirements.txt; \
     else \
       echo "No requirements.txt found; skipping pip install"; \
     fi
 
-# Change "bot.py" to your actual entry script if different
+# Change "bot.py" if your entry script has a different name
 CMD ["python", "bot.py"]
