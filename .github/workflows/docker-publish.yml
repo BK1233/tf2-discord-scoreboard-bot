@@ -1,19 +1,38 @@
-- uses: actions/checkout@v4
+name: Publish Docker image
 
-- name: Show repo tree and Dockerfile (debug)
-  run: |
-    pwd
-    ls -la
-    echo "---- Dockerfile (head) ----"
-    head -n 60 Dockerfile || true
+on:
+  push:
+    branches: [ "main" ]
+  release:
+    types: [published]
 
-- name: Build and push Docker image
-  uses: docker/build-push-action@v5
-  with:
-    context: .
-    file: ./Dockerfile          # <— explicit
-    push: true
-    no-cache: true              # <— avoid using old cached Dockerfile
-    tags: |
-      beekay123/tf2-discord-scoreboard:latest
-      beekay123/tf2-discord-scoreboard:${{ github.ref_name }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show repo tree and Dockerfile (debug)
+        run: |
+          pwd
+          ls -la
+          echo "---- Dockerfile (head) ----"
+          head -n 60 Dockerfile || true
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile       # explicitly point to your Dockerfile
+          push: true
+          no-cache: true           # makes sure we don’t use cached layers
+          tags: |
+            beekay123/tf2-discord-scoreboard:latest
+            beekay123/tf2-discord-scoreboard:${{ github.ref_name }}
